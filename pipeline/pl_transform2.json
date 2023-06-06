@@ -1,0 +1,30 @@
+{
+	"name": "pl_transform2",
+	"properties": {
+		"activities": [
+			{
+				"name": "race_results",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Practice/trans/1.race_results"
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_databricks_course_ws",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-05-05T04:26:05Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

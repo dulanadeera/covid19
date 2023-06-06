@@ -1,0 +1,9 @@
+{
+	"name": "databrick-course-df",
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "41074477-265a-40ae-8240-e7f9d5fc4f32",
+		"tenantId": "863471fe-826a-48f4-b58f-53327b0300b5"
+	}
+}

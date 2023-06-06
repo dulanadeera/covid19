@@ -1,0 +1,24 @@
+{
+	"name": "check_data",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_formula1dl_storage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_date": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "raw-2"
+			}
+		},
+		"schema": {}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
