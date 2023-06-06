@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "databrick-course-df"
+		},
+		"ls_covid19reportinglksc_accountKey": {
+			"value": ""
+		},
+		"ls_covidstoragesac_connectionString": {
+			"value": ""
+		},
+		"ls_formula1dl_storage_accountKey": {
+			"value": ""
+		},
+		"ls_covid19reportinglksc_properties_typeProperties_url": {
+			"value": "https://covid19reportinglksc.dfs.core.windows.net/"
+		},
+		"ls_databricks_course_ws_properties_typeProperties_existingClusterId": {
+			"value": "0225-050922-hmxerc5t"
+		},
+		"ls_formula1dl_storage_properties_typeProperties_url": {
+			"value": "https://formula1nd.dfs.core.windows.net/"
+		},
+		"tr_transform_formula1_data_properties_pipeline_parameters_p_window_end_date": {
+			"value": "@trigger().outputs.windowEndTime"
+		}
+	}
+}
