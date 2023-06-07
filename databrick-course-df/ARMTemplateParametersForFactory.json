@@ -25,6 +25,9 @@
 		},
 		"tr_transform_formula1_data_properties_pipeline_parameters_p_window_end_date": {
 			"value": "@trigger().outputs.windowEndTime"
+		},
+		"tr_population_ingest_data_properties_typeProperties_scope": {
+			"value": "/subscriptions/0623c456-13a8-47ab-a9c0-018dc750d42e/resourceGroups/databricks-rs/providers/Microsoft.Storage/storageAccounts/covidstoragesac"
 		}
 	}
 }
