@@ -54,6 +54,10 @@
 							"relativeUrl": {
 								"value": "@pipeline().parameters.servicerelativeURL",
 								"type": "Expression"
+							},
+							"baseURL": {
+								"value": "@pipeline().parameters.baseURL",
+								"type": "Expression"
 							}
 						}
 					}
@@ -77,6 +81,9 @@
 				"type": "string"
 			},
 			"sinkFileName": {
+				"type": "string"
+			},
+			"baseURL": {
 				"type": "string"
 			}
 		},
