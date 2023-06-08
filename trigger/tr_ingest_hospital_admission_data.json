@@ -3,7 +3,18 @@
 	"properties": {
 		"annotations": [],
 		"runtimeState": "Started",
-		"pipelines": [],
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "pl_ecdc_death_cases",
+					"type": "PipelineReference"
+				},
+				"parameters": {
+					"servicerelativeURL": "covid19/hospitalicuadmissionrates/csv/data.csv",
+					"sinkFileName": "hospital_admission.csv"
+				}
+			}
+		],
 		"type": "ScheduleTrigger",
 		"typeProperties": {
 			"recurrence": {
