@@ -34,10 +34,6 @@
 		"ls_opendate_ecdc_europe_eu_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://opendata.ecdc.europa.eu"
-		},
-		"tr_population_ingest_data_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/0623c456-13a8-47ab-a9c0-018dc750d42e/resourceGroups/databricks-rs/providers/Microsoft.Storage/storageAccounts/covidstoragesac"
 		}
 	},
 	"variables": {
@@ -424,6 +420,35 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_ecdc_opendata_lk')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_covid19reportinglksc",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "cases_deaths.csv",
+						"folderPath": "ecdc",
+						"fileSystem": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_covid19reportinglksc')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ds_formula1_raw')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -501,6 +526,83 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ls_covid19reportinglksc')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_ecdc_death_cases')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy cases and death data",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "ds_ecdc_opendata_http_raw",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ds_ecdc_opendata_lk",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_ecdc_opendata_http_raw')]",
+				"[concat(variables('factoryId'), '/datasets/ds_ecdc_opendata_lk')]"
 			]
 		},
 		{
@@ -1475,78 +1577,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/pl_ingest_formula1_data')]",
 				"[concat(variables('factoryId'), '/pipelines/pl_transform_formula1_data')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_sales_load')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Load Sales",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "pl_ingest_sales",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {
-								"p_date": {
-									"value": "@formatDateTime(pipeline().parameters.p_date,'dd-MM-yyy')",
-									"type": "Expression"
-								}
-							}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"parameters": {
-					"p_date": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-05-05T04:26:06Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_ingest_sales')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/tr_population_ingest_data')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "pl_ingest_population_data",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "BlobEventsTrigger",
-				"typeProperties": {
-					"blobPathBeginsWith": "/population/blobs/population_by_age.tsv.gz",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('tr_population_ingest_data_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_ingest_population_data')]"
 			]
 		}
 	]
