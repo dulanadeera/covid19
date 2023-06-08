@@ -33,7 +33,7 @@
 		},
 		"ls_opendate_ecdc_europe_eu_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://opendata.ecdc.europa.eu"
+			"defaultValue": "@{linkedService().sourceBaseURL}"
 		},
 		"tr_ingest_hospital_admission_data_properties_pl_ecdc_death_cases_parameters_servicerelativeURL": {
 			"type": "string",
@@ -114,6 +114,10 @@
 									"relativeUrl": {
 										"value": "@pipeline().parameters.servicerelativeURL",
 										"type": "Expression"
+									},
+									"baseURL": {
+										"value": "@pipeline().parameters.baseURL",
+										"type": "Expression"
 									}
 								}
 							}
@@ -141,6 +145,9 @@
 						"type": "string"
 					},
 					"sinkFileName": {
+						"type": "string"
+					},
+					"baseURL": {
 						"type": "string"
 					}
 				},
@@ -1571,10 +1578,19 @@
 			"properties": {
 				"linkedServiceName": {
 					"referenceName": "ls_opendate_ecdc_europe_eu",
-					"type": "LinkedServiceReference"
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"sourceBaseURL": {
+							"value": "@dataset().baseURL",
+							"type": "Expression"
+						}
+					}
 				},
 				"parameters": {
 					"relativeUrl": {
+						"type": "string"
+					},
+					"baseURL": {
 						"type": "string"
 					}
 				},
@@ -1784,6 +1800,11 @@
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"parameters": {
+					"sourceBaseURL": {
+						"type": "string"
+					}
+				},
 				"annotations": [],
 				"type": "HttpServer",
 				"typeProperties": {

@@ -24,7 +24,7 @@
 			"value": "https://formula1nd.dfs.core.windows.net/"
 		},
 		"ls_opendate_ecdc_europe_eu_properties_typeProperties_url": {
-			"value": "https://opendata.ecdc.europa.eu"
+			"value": "@{linkedService().sourceBaseURL}"
 		},
 		"tr_ingest_hospital_admission_data_properties_pl_ecdc_death_cases_parameters_servicerelativeURL": {
 			"value": "covid19/hospitalicuadmissionrates/csv/data.csv"

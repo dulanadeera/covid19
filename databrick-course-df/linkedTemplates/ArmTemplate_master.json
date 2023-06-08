@@ -33,7 +33,7 @@
 		},
 		"ls_opendate_ecdc_europe_eu_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://opendata.ecdc.europa.eu"
+			"defaultValue": "@{linkedService().sourceBaseURL}"
 		},
 		"tr_ingest_hospital_admission_data_properties_pl_ecdc_death_cases_parameters_servicerelativeURL": {
 			"type": "string",
