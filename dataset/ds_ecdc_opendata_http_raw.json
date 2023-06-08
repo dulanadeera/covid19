@@ -1,0 +1,22 @@
+{
+	"name": "ds_ecdc_opendata_http_raw",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_opendate_ecdc_europe_eu",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "covid19/nationalcasedeath/csv"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
