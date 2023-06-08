@@ -104,7 +104,7 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"relativeUrl": {
-										"value": "@variables('servicerelativeURL')",
+										"value": "@pipeline().parameters.servicerelativeURL",
 										"type": "Expression"
 									}
 								}
@@ -116,7 +116,7 @@
 								"type": "DatasetReference",
 								"parameters": {
 									"fileName": {
-										"value": "@variables('sinkFileName')",
+										"value": "@pipeline().parameters.sinkFileName",
 										"type": "Expression"
 									}
 								}
@@ -128,14 +128,12 @@
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
-				"variables": {
+				"parameters": {
 					"servicerelativeURL": {
-						"type": "String",
-						"defaultValue": "covid19/hospitalicuadmissionrates/csv/data.csv"
+						"type": "string"
 					},
 					"sinkFileName": {
-						"type": "String",
-						"defaultValue": "hospital_admission.csv"
+						"type": "string"
 					}
 				},
 				"annotations": []
