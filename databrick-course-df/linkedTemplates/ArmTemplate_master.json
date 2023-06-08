@@ -31,13 +31,17 @@
 			"type": "string",
 			"defaultValue": "https://formula1nd.dfs.core.windows.net/"
 		},
-		"tr_transform_formula1_data_properties_pipeline_parameters_p_window_end_date": {
+		"ls_opendate_ecdc_europe_eu_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "@trigger().outputs.windowEndTime"
+			"defaultValue": "https://opendata.ecdc.europa.eu"
 		},
 		"tr_population_ingest_data_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/0623c456-13a8-47ab-a9c0-018dc750d42e/resourceGroups/databricks-rs/providers/Microsoft.Storage/storageAccounts/covidstoragesac"
+		},
+		"tr_transform_formula1_data_properties_pipeline_parameters_p_window_end_date": {
+			"type": "string",
+			"defaultValue": "@trigger().outputs.windowEndTime"
 		},
 		"containerUri": {
 			"type": "string",
@@ -84,15 +88,38 @@
 					"ls_formula1dl_storage_properties_typeProperties_url": {
 						"value": "[parameters('ls_formula1dl_storage_properties_typeProperties_url')]"
 					},
+					"ls_opendate_ecdc_europe_eu_properties_typeProperties_url": {
+						"value": "[parameters('ls_opendate_ecdc_europe_eu_properties_typeProperties_url')]"
+					},
 					"tr_population_ingest_data_properties_typeProperties_scope": {
 						"value": "[parameters('tr_population_ingest_data_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "databrick-course-df_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"tr_transform_formula1_data_properties_pipeline_parameters_p_window_end_date": {
 						"value": "[parameters('tr_transform_formula1_data_properties_pipeline_parameters_p_window_end_date')]"
 					}
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'databrick-course-df_ArmTemplate_0')]"
+			]
 		}
 	]
 }
