@@ -1,0 +1,17 @@
+{
+	"name": "tr_ecdc_data",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2023-06-08T11:17:00",
+				"timeZone": "Sri Lanka Standard Time"
+			}
+		}
+	}
+}
