@@ -31,6 +31,12 @@
 		},
 		"tr_transform_formula1_data_properties_pipeline_parameters_p_window_end_date": {
 			"value": "@trigger().outputs.windowEndTime"
+		},
+		"tr_ingest_hospital_admission_data_properties_pl_ecdc_death_cases_parameters_servicerelativeURL": {
+			"value": "covid19/hospitalicuadmissionrates/csv/data.csv"
+		},
+		"tr_ingest_hospital_admission_data_properties_pl_ecdc_death_cases_parameters_sinkFileName": {
+			"value": "hospital_admission.csv"
 		}
 	}
 }
