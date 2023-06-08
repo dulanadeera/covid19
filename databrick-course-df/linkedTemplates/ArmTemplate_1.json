@@ -7,14 +7,6 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "databrick-course-df"
 		},
-		"tr_ingest_hospital_admission_data_properties_pl_ecdc_death_cases_parameters_servicerelativeURL": {
-			"type": "string",
-			"defaultValue": "covid19/hospitalicuadmissionrates/csv/data.csv"
-		},
-		"tr_ingest_hospital_admission_data_properties_pl_ecdc_death_cases_parameters_sinkFileName": {
-			"type": "string",
-			"defaultValue": "hospital_admission.csv"
-		},
 		"tr_population_ingest_data_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/0623c456-13a8-47ab-a9c0-018dc750d42e/resourceGroups/databricks-rs/providers/Microsoft.Storage/storageAccounts/covidstoragesac"
@@ -353,10 +345,7 @@
 							"referenceName": "pl_ecdc_death_cases",
 							"type": "PipelineReference"
 						},
-						"parameters": {
-							"servicerelativeURL": "[parameters('tr_ingest_hospital_admission_data_properties_pl_ecdc_death_cases_parameters_servicerelativeURL')]",
-							"sinkFileName": "[parameters('tr_ingest_hospital_admission_data_properties_pl_ecdc_death_cases_parameters_sinkFileName')]"
-						}
+						"parameters": {}
 					}
 				],
 				"type": "ScheduleTrigger",

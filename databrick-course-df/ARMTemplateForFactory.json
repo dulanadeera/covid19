@@ -35,14 +35,6 @@
 			"type": "string",
 			"defaultValue": "@{linkedService().sourceBaseURL}"
 		},
-		"tr_ingest_hospital_admission_data_properties_pl_ecdc_death_cases_parameters_servicerelativeURL": {
-			"type": "string",
-			"defaultValue": "covid19/hospitalicuadmissionrates/csv/data.csv"
-		},
-		"tr_ingest_hospital_admission_data_properties_pl_ecdc_death_cases_parameters_sinkFileName": {
-			"type": "string",
-			"defaultValue": "hospital_admission.csv"
-		},
 		"tr_population_ingest_data_properties_typeProperties_scope": {
 			"type": "string",
 			"defaultValue": "/subscriptions/0623c456-13a8-47ab-a9c0-018dc750d42e/resourceGroups/databricks-rs/providers/Microsoft.Storage/storageAccounts/covidstoragesac"
@@ -63,8 +55,8 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy ecdc data",
-						"type": "Copy",
+						"name": "Looku ecdc files",
+						"type": "Lookup",
 						"dependsOn": [],
 						"policy": {
 							"timeout": "0.12:00:00",
@@ -76,84 +68,127 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "DelimitedTextSource",
+								"type": "JsonSource",
 								"storeSettings": {
-									"type": "HttpReadSettings",
-									"requestMethod": "GET"
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
+									"type": "JsonReadSettings"
 								}
 							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "ds_ecdc_opendata_http_raw",
+							"dataset": {
+								"referenceName": "ds_ecdc_file_list",
 								"type": "DatasetReference",
-								"parameters": {
-									"relativeUrl": {
-										"value": "@pipeline().parameters.servicerelativeURL",
-										"type": "Expression"
-									},
-									"baseURL": {
-										"value": "@pipeline().parameters.baseURL",
-										"type": "Expression"
-									}
-								}
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "execute copy for each files",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Looku ecdc files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
 							}
 						],
-						"outputs": [
-							{
-								"referenceName": "ds_ecdc_opendata_lk",
-								"type": "DatasetReference",
-								"parameters": {
-									"fileName": {
-										"value": "@pipeline().parameters.sinkFileName",
-										"type": "Expression"
-									}
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Looku ecdc files').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy ecdc data",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.12:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "DelimitedTextSource",
+											"storeSettings": {
+												"type": "HttpReadSettings",
+												"requestMethod": "GET"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings"
+											}
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "ds_ecdc_opendata_http_raw",
+											"type": "DatasetReference",
+											"parameters": {
+												"relativeUrl": {
+													"value": "@item().sourceRelativeURL",
+													"type": "Expression"
+												},
+												"baseURL": {
+													"value": "@item().sourceBaseURL",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ds_ecdc_opendata_lk",
+											"type": "DatasetReference",
+											"parameters": {
+												"fileName": {
+													"value": "@item().sinkFileName",
+													"type": "Expression"
+												}
+											}
+										}
+									]
 								}
-							}
-						]
+							]
+						}
 					}
 				],
 				"policy": {
 					"elapsedTimeMetric": {},
 					"cancelAfter": {}
 				},
-				"parameters": {
-					"servicerelativeURL": {
-						"type": "string"
-					},
-					"sinkFileName": {
-						"type": "string"
-					},
-					"baseURL": {
-						"type": "string"
-					}
-				},
 				"annotations": []
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/ds_ecdc_file_list')]",
 				"[concat(variables('factoryId'), '/datasets/ds_ecdc_opendata_http_raw')]",
 				"[concat(variables('factoryId'), '/datasets/ds_ecdc_opendata_lk')]"
 			]
@@ -1552,6 +1587,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
+						"fileName": "ecdc_file_list.json",
 						"container": "configs"
 					}
 				},
@@ -1828,10 +1864,7 @@
 							"referenceName": "pl_ecdc_death_cases",
 							"type": "PipelineReference"
 						},
-						"parameters": {
-							"servicerelativeURL": "[parameters('tr_ingest_hospital_admission_data_properties_pl_ecdc_death_cases_parameters_servicerelativeURL')]",
-							"sinkFileName": "[parameters('tr_ingest_hospital_admission_data_properties_pl_ecdc_death_cases_parameters_sinkFileName')]"
-						}
+						"parameters": {}
 					}
 				],
 				"type": "ScheduleTrigger",
