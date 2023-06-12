@@ -13,7 +13,7 @@
 				"folderPath": "ecdc/hospiyal_admission_wekkly",
 				"fileSystem": "processed"
 			},
-			"columnDelimiter": "\t",
+			"columnDelimiter": ",",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
