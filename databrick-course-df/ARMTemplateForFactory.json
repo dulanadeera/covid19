@@ -1980,7 +1980,7 @@
 						"folderPath": "ecdc/hospiyal_admission_wekkly",
 						"fileSystem": "processed"
 					},
-					"columnDelimiter": ",",
+					"columnDelimiter": "\t",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
@@ -2065,7 +2065,7 @@
 						"folderPath": "ecdc/hosAdmission_daily",
 						"fileSystem": "processed"
 					},
-					"columnDelimiter": ",",
+					"columnDelimiter": "\t",
 					"escapeChar": "\\",
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
