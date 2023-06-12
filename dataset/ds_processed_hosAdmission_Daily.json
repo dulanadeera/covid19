@@ -13,7 +13,7 @@
 				"folderPath": "ecdc/hosAdmission_daily",
 				"fileSystem": "processed"
 			},
-			"columnDelimiter": ",",
+			"columnDelimiter": "\t",
 			"escapeChar": "\\",
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
