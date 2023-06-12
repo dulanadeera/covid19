@@ -447,6 +447,83 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_dimDate')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_covid19reportinglksc",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "dim_date.csv",
+						"fileSystem": "lookup"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"name": "date_key",
+						"type": "String"
+					},
+					{
+						"name": "date",
+						"type": "String"
+					},
+					{
+						"name": "year",
+						"type": "String"
+					},
+					{
+						"name": "month",
+						"type": "String"
+					},
+					{
+						"name": "day",
+						"type": "String"
+					},
+					{
+						"name": "day_name",
+						"type": "String"
+					},
+					{
+						"name": "day_of_year",
+						"type": "String"
+					},
+					{
+						"name": "week_of_month",
+						"type": "String"
+					},
+					{
+						"name": "week_of_year",
+						"type": "String"
+					},
+					{
+						"name": "month_name",
+						"type": "String"
+					},
+					{
+						"name": "year_month",
+						"type": "String"
+					},
+					{
+						"name": "year_week",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_covid19reportinglksc')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ds_ecdc_file_list')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -613,6 +690,34 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/ds_hosAdmission_processed_weekly')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_covid19reportinglksc",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "ecdc/hospiyal_admission_wekkly",
+						"fileSystem": "processed"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_covid19reportinglksc')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ds_population_raw_tsv')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -656,6 +761,34 @@
 					"location": {
 						"type": "AzureBlobFSLocation",
 						"folderPath": "ecdc/deathcases",
+						"fileSystem": "processed"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_covid19reportinglksc')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/ds_processed_hosAdmission_Daily')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ls_covid19reportinglksc",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"folderPath": "ecdc/hosAdmission_daily",
 						"fileSystem": "processed"
 					},
 					"columnDelimiter": ",",
@@ -733,533 +866,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ls_covid19reportinglksc')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_ecdc_death_cases')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Looku ecdc files",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "JsonSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "JsonReadSettings"
-								}
-							},
-							"dataset": {
-								"referenceName": "ds_ecdc_file_list",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "execute copy for each files",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Looku ecdc files",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Looku ecdc files').output.value",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "Copy ecdc data",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "DelimitedTextSource",
-											"storeSettings": {
-												"type": "HttpReadSettings",
-												"requestMethod": "GET"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
-										},
-										"sink": {
-											"type": "DelimitedTextSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "DelimitedTextWriteSettings",
-												"quoteAllText": true,
-												"fileExtension": ".txt"
-											}
-										},
-										"enableStaging": false,
-										"translator": {
-											"type": "TabularTranslator",
-											"typeConversion": true,
-											"typeConversionSettings": {
-												"allowDataTruncation": true,
-												"treatBooleanAsNumber": false
-											}
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "ds_ecdc_opendata_http_raw",
-											"type": "DatasetReference",
-											"parameters": {
-												"relativeUrl": {
-													"value": "@item().sourceRelativeURL",
-													"type": "Expression"
-												},
-												"baseURL": {
-													"value": "@item().sourceBaseURL",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "ds_ecdc_opendata_lk",
-											"type": "DatasetReference",
-											"parameters": {
-												"fileName": {
-													"value": "@item().sinkFileName",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_ecdc_file_list')]",
-				"[concat(variables('factoryId'), '/datasets/ds_ecdc_opendata_http_raw')]",
-				"[concat(variables('factoryId'), '/datasets/ds_ecdc_opendata_lk')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_ingest_formula1_data')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "If Folders Exists",
-						"type": "IfCondition",
-						"dependsOn": [
-							{
-								"activity": "Get Folder Details",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"expression": {
-								"value": "@activity('Get Folder Details').output.exists\r\n",
-								"type": "Expression"
-							},
-							"ifTrueActivities": [
-								{
-									"name": "Ingest Circuit File",
-									"type": "DatabricksNotebook",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"notebookPath": "/formula1/Ingestion/1.ingestion-circuit-file",
-										"baseParameters": {
-											"p_file_date": {
-												"value": "@formatDateTime(pipeline().parameters.p_window_end_date,'yyy-MM-dd')",
-												"type": "Expression"
-											},
-											"v_data_source": {
-												"value": "@variables('v_data_source')",
-												"type": "Expression"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "ls_databricks_course_ws",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Ingest Races File",
-									"type": "DatabricksNotebook",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"notebookPath": "/formula1/Ingestion/2.ingestion-races-file",
-										"baseParameters": {
-											"p_file_date": {
-												"value": "@formatDateTime(pipeline().parameters.p_window_end_date,'yyy-MM-dd')",
-												"type": "Expression"
-											},
-											"v_data_source": {
-												"value": "@variables('v_data_source')",
-												"type": "Expression"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "ls_databricks_course_ws",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Ingest Constructor File",
-									"type": "DatabricksNotebook",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"notebookPath": "/formula1/Ingestion/3.ingest_constructor_file",
-										"baseParameters": {
-											"p_file_date": {
-												"value": "@formatDateTime(pipeline().parameters.p_window_end_date,'yyy-MM-dd')",
-												"type": "Expression"
-											},
-											"v_data_source": {
-												"value": "@variables('v_data_source')",
-												"type": "Expression"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "ls_databricks_course_ws",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Ingest Driver File",
-									"type": "DatabricksNotebook",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"notebookPath": "/formula1/Ingestion/4.ingest_drivers_file",
-										"baseParameters": {
-											"p_file_date": {
-												"value": "@formatDateTime(pipeline().parameters.p_window_end_date,'yyy-MM-dd')",
-												"type": "Expression"
-											},
-											"v_data_source": {
-												"value": "@variables('v_data_source')",
-												"type": "Expression"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "ls_databricks_course_ws",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Ingest Results File",
-									"type": "DatabricksNotebook",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"notebookPath": "/formula1/Ingestion/5.ingest_results_file",
-										"baseParameters": {
-											"p_file_date": {
-												"value": "@formatDateTime(pipeline().parameters.p_window_end_date,'yyy-MM-dd')",
-												"type": "Expression"
-											},
-											"v_data_source": {
-												"value": "@variables('v_data_source')",
-												"type": "Expression"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "ls_databricks_course_ws",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Ingest Pit Stops File",
-									"type": "DatabricksNotebook",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"notebookPath": "/formula1/Ingestion/6.ingest_pitstops_file",
-										"baseParameters": {
-											"p_file_date": {
-												"value": "@formatDateTime(pipeline().parameters.p_window_end_date,'yyy-MM-dd')",
-												"type": "Expression"
-											},
-											"v_data_source": {
-												"value": "@variables('v_data_source')",
-												"type": "Expression"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "ls_databricks_course_ws",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Ingest Lap Times",
-									"type": "DatabricksNotebook",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"notebookPath": "/formula1/Ingestion/7.ingest_lap_times_file",
-										"baseParameters": {
-											"p_file_date": {
-												"value": "@formatDateTime(pipeline().parameters.p_window_end_date,'yyy-MM-dd')",
-												"type": "Expression"
-											},
-											"v_data_source": {
-												"value": "@variables('v_data_source')",
-												"type": "Expression"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "ls_databricks_course_ws",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Ingest Quilifying File",
-									"type": "DatabricksNotebook",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"notebookPath": "/formula1/Ingestion/8.ingest_qualifying_file",
-										"baseParameters": {
-											"p_file_date": {
-												"value": "@formatDateTime(pipeline().parameters.p_window_end_date,'yyy-MM-dd')",
-												"type": "Expression"
-											},
-											"v_data_source": {
-												"value": "@variables('v_data_source')",
-												"type": "Expression"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "ls_databricks_course_ws",
-										"type": "LinkedServiceReference"
-									}
-								}
-							]
-						}
-					},
-					{
-						"name": "Get Folder Details",
-						"type": "GetMetadata",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataset": {
-								"referenceName": "ds_formula1_raw",
-								"type": "DatasetReference",
-								"parameters": {
-									"p_window_end_date": {
-										"value": "@pipeline().parameters.p_window_end_date",
-										"type": "Expression"
-									}
-								}
-							},
-							"fieldList": [
-								"exists"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "JsonReadSettings"
-							}
-						}
-					}
-				],
-				"concurrency": 1,
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"parameters": {
-					"p_window_end_date": {
-						"type": "string"
-					}
-				},
-				"variables": {
-					"v_data_source": {
-						"type": "String",
-						"defaultValue": "Ergast"
-					}
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-05-05T04:26:05Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/ds_formula1_raw')]",
-				"[concat(variables('factoryId'), '/linkedServices/ls_databricks_course_ws')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pl_ingest_load')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Load",
-						"type": "ExecutePipeline",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "pl_ingest_practice",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					},
-					{
-						"name": "transform",
-						"type": "ExecutePipeline",
-						"dependsOn": [
-							{
-								"activity": "Load",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"pipeline": {
-								"referenceName": "pl_transform2",
-								"type": "PipelineReference"
-							},
-							"waitOnCompletion": true,
-							"parameters": {}
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-05-05T04:26:05Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/pl_ingest_practice')]",
-				"[concat(variables('factoryId'), '/pipelines/pl_transform2')]"
 			]
 		}
 	]
