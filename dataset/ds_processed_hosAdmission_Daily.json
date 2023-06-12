@@ -1,0 +1,23 @@
+{
+	"name": "ds_processed_hosAdmission_Daily",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_covid19reportinglksc",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "ecdc/hosAdmission_daily",
+				"fileSystem": "processed"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
