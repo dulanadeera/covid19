@@ -19,6 +19,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accessToken' of 'ls_databricks_covid'"
 		},
+		"ls_deathCases_sql_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'ls_deathCases_sql'"
+		},
 		"ls_formula1dl_storage_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_formula1dl_storage'"
@@ -87,6 +91,9 @@
 					"ls_databricks_covid_accessToken": {
 						"value": "[parameters('ls_databricks_covid_accessToken')]"
 					},
+					"ls_deathCases_sql_connectionString": {
+						"value": "[parameters('ls_deathCases_sql_connectionString')]"
+					},
 					"ls_formula1dl_storage_accountKey": {
 						"value": "[parameters('ls_formula1dl_storage_accountKey')]"
 					},
@@ -122,6 +129,26 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'databrick-course-df_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "databrick-course-df_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
 					},
 					"tr_population_ingest_data_properties_typeProperties_scope": {
 						"value": "[parameters('tr_population_ingest_data_properties_typeProperties_scope')]"
@@ -132,7 +159,7 @@
 				}
 			},
 			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'databrick-course-df_ArmTemplate_0')]"
+				"[resourceId('Microsoft.Resources/deployments', 'databrick-course-df_ArmTemplate_1')]"
 			]
 		}
 	]
