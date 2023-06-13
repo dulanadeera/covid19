@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'ls_covidstoragesac'"
 		},
+		"ls_databricks_covid_accessToken": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accessToken' of 'ls_databricks_covid'"
+		},
 		"ls_formula1dl_storage_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'ls_formula1dl_storage'"
@@ -26,6 +30,10 @@
 		"ls_databricks_course_ws_properties_typeProperties_existingClusterId": {
 			"type": "string",
 			"defaultValue": "0225-050922-hmxerc5t"
+		},
+		"ls_databricks_covid_properties_typeProperties_existingClusterId": {
+			"type": "string",
+			"defaultValue": "0613-111130-81zl3o5c"
 		},
 		"ls_formula1dl_storage_properties_typeProperties_url": {
 			"type": "string",
@@ -76,6 +84,9 @@
 					"ls_covidstoragesac_connectionString": {
 						"value": "[parameters('ls_covidstoragesac_connectionString')]"
 					},
+					"ls_databricks_covid_accessToken": {
+						"value": "[parameters('ls_databricks_covid_accessToken')]"
+					},
 					"ls_formula1dl_storage_accountKey": {
 						"value": "[parameters('ls_formula1dl_storage_accountKey')]"
 					},
@@ -84,6 +95,9 @@
 					},
 					"ls_databricks_course_ws_properties_typeProperties_existingClusterId": {
 						"value": "[parameters('ls_databricks_course_ws_properties_typeProperties_existingClusterId')]"
+					},
+					"ls_databricks_covid_properties_typeProperties_existingClusterId": {
+						"value": "[parameters('ls_databricks_covid_properties_typeProperties_existingClusterId')]"
 					},
 					"ls_formula1dl_storage_properties_typeProperties_url": {
 						"value": "[parameters('ls_formula1dl_storage_properties_typeProperties_url')]"

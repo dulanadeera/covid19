@@ -11,6 +11,9 @@
 		"ls_covidstoragesac_connectionString": {
 			"value": ""
 		},
+		"ls_databricks_covid_accessToken": {
+			"value": ""
+		},
 		"ls_formula1dl_storage_accountKey": {
 			"value": ""
 		},
@@ -19,6 +22,9 @@
 		},
 		"ls_databricks_course_ws_properties_typeProperties_existingClusterId": {
 			"value": "0225-050922-hmxerc5t"
+		},
+		"ls_databricks_covid_properties_typeProperties_existingClusterId": {
+			"value": "0613-111130-81zl3o5c"
 		},
 		"ls_formula1dl_storage_properties_typeProperties_url": {
 			"value": "https://formula1nd.dfs.core.windows.net/"
