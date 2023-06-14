@@ -20,6 +20,9 @@
 		"ls_formula1dl_storage_accountKey": {
 			"value": ""
 		},
+		"ls_sinkdailyhospitaladmission_connectionString": {
+			"value": ""
+		},
 		"ls_covid19reportinglksc_properties_typeProperties_url": {
 			"value": "https://covid19reportinglksc.dfs.core.windows.net/"
 		},
